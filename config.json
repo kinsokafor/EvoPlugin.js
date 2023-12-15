@@ -1,10 +1,10 @@
 {
     "modules":
     {
-        "{pluginName}":
+        "<pluginName>":
         {
             "entry": [
-                "{entry}/index"
+                "<entry>/index"
             ],
             "active": true,
             "installed": false,
