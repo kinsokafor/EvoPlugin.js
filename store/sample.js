@@ -29,8 +29,8 @@ export const useSampleStore = defineStore('useSampleStore', {
                 ...params
             }).then(r => {
                 if ("id" in params) {
-                    const meta = JSON.parse(r.data.meta)
-                    delete r.data.meta
+                    // const meta = JSON.parse(r.data.meta)
+                    // delete r.data.meta
                     let i = { ...r.data, ...meta }
                     const index = this.data.findIndex(j => j.id == i.id)
                     if (index == -1) {
@@ -42,8 +42,8 @@ export const useSampleStore = defineStore('useSampleStore', {
                     }
                 } else {
                     r.data.forEach(i => {
-                        i = { ...i, ...(JSON.parse(i.meta)) }
-                        delete i.meta
+                        // i = { ...i, ...(JSON.parse(i.meta)) }
+                        // delete i.meta
                         const index = this.data.findIndex(j => j.id == i.id)
                         if (index == -1) {
                             this.data = [...this.data, i]
@@ -76,7 +76,8 @@ export const useSampleStore = defineStore('useSampleStore', {
         get: (state) => {
             const data = state.data
             return (params = {}) => {
-                if (!state.fetching) {
+                if (!state.fetching || !_.isEqual(params, state.lastParams)) {
+                    state.lastParams = params;
                     state.loadFromServer(params)
                 }
                 const r = data.filter(i => {
