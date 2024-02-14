@@ -82,6 +82,9 @@ export const useSampleStore = defineStore('useSampleStore', {
                 }
                 const r = data.filter(i => {
                     for (var k in params) {
+                        if(typeof params[k] == "string") {
+                            return new RegExp('^' + params[k].replace(/\%/g, '.*') + '$').test(i[k])
+                        }
                         if (k in i && params[k] != i[k]) return false
                         return true
                     }
