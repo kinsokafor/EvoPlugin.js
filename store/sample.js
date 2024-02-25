@@ -9,7 +9,8 @@ export const useSampleStore = defineStore('useSampleStore', {
             processing: false,
             fetching: false,
             limit: 100,
-            offset: 0
+            offset: 0,
+            dbtable: new dbTable
         }
     },
     actions: {
@@ -20,8 +21,7 @@ export const useSampleStore = defineStore('useSampleStore', {
             }
             this.fetching = true;
             this.processing = true;
-            const dbtable = new dbTable;
-            dbtable.get('bh_data', {
+            this.dbtable.get('bh_data', {
                 limit: this.limit,
                 offset: this.offset,
                 order: 'asc',
@@ -64,6 +64,11 @@ export const useSampleStore = defineStore('useSampleStore', {
                     }, 60000)
                 }
             })
+        },
+
+        abort() {
+            this.dbtable.abort()
+            this.fetching = false;
         }
     },
     getters: {
@@ -82,9 +87,6 @@ export const useSampleStore = defineStore('useSampleStore', {
                 }
                 const r = data.filter(i => {
                     for (var k in params) {
-                        if(typeof params[k] == "string") {
-                            return new RegExp('^' + params[k].replace(/\%/g, '.*') + '$').test(i[k])
-                        }
                         if (k in i && params[k] != i[k]) return false
                         return true
                     }
