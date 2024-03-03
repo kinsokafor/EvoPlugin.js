@@ -60,9 +60,12 @@ export const useSampleStore = defineStore('useSampleStore', {
                     this.loadFromServer(params)
                 } else {
                     this.offset = 0
+                    if(this.lastTimeOut != null) {
+                        clearTimeout(this.lastTimeOut)
+                    }
                     this.lastTimeOut = setTimeout(() => {
                         this.fetching = false
-                    }, 60000)
+                    }, 180000)
                 }
             })
         },
@@ -75,10 +78,6 @@ export const useSampleStore = defineStore('useSampleStore', {
     getters: {
         all: (state) => {
             if (!state.fetching) {
-                if(state.lastTimeOut != null) {
-                    clearTimeout(state.lastTimeOut)
-                    state.lastTimeOut = null
-                }
                 state.loadFromServer()
             }
             return state.data;
@@ -88,10 +87,6 @@ export const useSampleStore = defineStore('useSampleStore', {
             return (params = {}) => {
                 if (!state.fetching || !_.isEqual(params, state.lastParams)) {
                     state.lastParams = params;
-                    if(state.lastTimeOut != null) {
-                        clearTimeout(state.lastTimeOut)
-                        state.lastTimeOut = null
-                    }
                     state.loadFromServer(params)
                 }
                 const r = data.filter(i => {
