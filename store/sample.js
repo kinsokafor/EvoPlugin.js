@@ -10,7 +10,8 @@ export const useSampleStore = defineStore('useSampleStore', {
             fetching: false,
             limit: 100,
             offset: 0,
-            dbtable: new dbTable
+            dbtable: new dbTable,
+            lastTimeOut: null
         }
     },
     actions: {
@@ -59,7 +60,7 @@ export const useSampleStore = defineStore('useSampleStore', {
                     this.loadFromServer(params)
                 } else {
                     this.offset = 0
-                    setTimeout(() => {
+                    this.lastTimeOut = setTimeout(() => {
                         this.fetching = false
                     }, 60000)
                 }
@@ -74,6 +75,10 @@ export const useSampleStore = defineStore('useSampleStore', {
     getters: {
         all: (state) => {
             if (!state.fetching) {
+                if(state.lastTimeOut != null) {
+                    clearTimeout(state.lastTimeOut)
+                    state.lastTimeOut = null
+                }
                 state.loadFromServer()
             }
             return state.data;
@@ -83,6 +88,10 @@ export const useSampleStore = defineStore('useSampleStore', {
             return (params = {}) => {
                 if (!state.fetching || !_.isEqual(params, state.lastParams)) {
                     state.lastParams = params;
+                    if(state.lastTimeOut != null) {
+                        clearTimeout(state.lastTimeOut)
+                        state.lastTimeOut = null
+                    }
                     state.loadFromServer(params)
                 }
                 const r = data.filter(i => {
