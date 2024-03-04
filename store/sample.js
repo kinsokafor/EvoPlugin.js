@@ -54,19 +54,20 @@ export const useSampleStore = defineStore('useSampleStore', {
                             }
                         }
                     })
-                }
-                if (r.data.length >= this.limit) {
-                    this.offset = this.limit + this.offset
-                    this.loadFromServer(params)
-                } else {
-                    this.offset = 0
-                    if(this.lastTimeOut != null) {
-                        clearTimeout(this.lastTimeOut)
+                    if (r.data.length >= this.limit) {
+                        this.offset = this.limit + this.offset
+                        this.loadFromServer(params)
+                    } else {
+                        this.offset = 0
+                        if(this.lastTimeOut != null) {
+                            clearTimeout(this.lastTimeOut)
+                        }
+                        this.lastTimeOut = setTimeout(() => {
+                            this.fetching = false
+                        }, 180000)
                     }
-                    this.lastTimeOut = setTimeout(() => {
-                        this.fetching = false
-                    }, 180000)
                 }
+                
             })
         },
 
